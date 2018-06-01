@@ -1,5 +1,6 @@
 const fs = require('fs'); 
 const readline = require('readline');
+const logger = require('log4js').getLogger('app');
 
 class LibraryNotLoadedError extends Error {}
 
@@ -18,11 +19,12 @@ class Library {
     }
 
     loadLibraryFromFile(filename){
+        logger.warn(`Loading library ${filename}`);
         return new Promise((resolve, reject) => {
 
             const lineReader = readline.createInterface({
                 input: fs.createReadStream(filename)
-            })
+            });
 
             lineReader.on('line', (line) => {
                 this.library.push(line.trim());
@@ -30,6 +32,7 @@ class Library {
 
             lineReader.on('close', () => {
                 resolve();
+                logger.info(`Library loaded! ${this.library.length} words added`);
             });
         })
     }

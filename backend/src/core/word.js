@@ -11,6 +11,10 @@ class MainWord {
             return [false, "Word should be more than 2 letters."];
         }
 
+        if(word === this.mainWord){
+            return [false, "Word is the same as main word"];
+        }
+
         const letterMap = { ...this.lettersMap};
         
         for(let i = 0; i < word.length; i++){
