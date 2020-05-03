@@ -8,7 +8,7 @@ import {
   InvalidWordError,
   WordAlreadyPresentError,
 } from 'src/core/gameSession'
-import { Word, HttpError } from './core/types'
+import { Word, HttpError } from '../core/types'
 
 export const router = Router()
 
@@ -66,7 +66,7 @@ router.post(
       ) {
         error.status = 400
       }
-      return next(e)
+      return next(error)
     }
 
     res.json({

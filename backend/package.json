@@ -4,7 +4,10 @@
   "description": "Backend of game-of-words game",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "HTTP_LOG_LEVEL=error APP_LOG_LEVEL=error jest --watch",
+    "build": "rm -rf ./dist && tsc",
+    "dev": "nodemon"
   },
   "author": "kernel72",
   "license": "ISC",
@@ -12,17 +15,40 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "log4js": "^2.8.0",
+    "module-alias": "^2.2.2",
     "shortid": "^2.2.8"
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
+    "@types/jest": "^25.2.1",
     "@types/log4js": "^2.3.5",
-    "@types/node": "^11.11.5",
+    "@types/node": "^13.13.4",
     "@types/shortid": "0.0.29",
+    "@types/supertest": "^2.0.9",
+    "jest": "^25.5.4",
+    "nodemon": "^2.0.3",
     "prettier": "^1.16.4",
+    "supertest": "^4.0.2",
+    "ts-jest": "^25.4.0",
     "tslint": "^5.14.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.3.4000"
+    "typescript": "^3.8.3"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src/"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "src/**/*.spec.ts"
+    ],
+    "exec": "yarn build && node ./dist/index.js",
+    "env": {
+      "FORCE_COLOR": true
+    }
+  },
+  "_moduleAliases": {
+    "src": "dist"
   }
 }

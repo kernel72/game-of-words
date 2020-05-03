@@ -75,9 +75,7 @@ export class MainWord implements IMainWord {
       if (charsAmount === 0) {
         return {
           isValid: false,
-          validationError: `Only ${
-            this.lettersMap[char]
-          } entries of '${char}' is acceptable.`,
+          validationError: `Only ${this.lettersMap[char]} entries of '${char}' is acceptable.`,
         }
       }
 
