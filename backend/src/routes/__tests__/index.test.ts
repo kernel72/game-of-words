@@ -19,6 +19,7 @@ describe('Endpoint /session', () => {
       expect(body).toEqual({
         word: MAIN_WORD,
         sessionId: expect.stringContaining(body.sessionId),
+        history: [],
       })
     })
   })
@@ -68,6 +69,8 @@ describe('Endpoint /session', () => {
 
       expect(status).toBe(200)
       expect(body).toEqual({
+        word: MAIN_WORD,
+        sessionId: expect.stringContaining(body.sessionId),
         history: [sendWord],
       })
     })

@@ -17,10 +17,7 @@ router.post(
   catchUnhandled((_, res, __) => {
     const game = GameSessions.getNewGame()
 
-    res.json({
-      sessionId: game.getId(),
-      word: game.getMainWord(),
-    })
+    res.json(game.getGameData())
   }),
 )
 
@@ -30,11 +27,7 @@ router.get(
   catchUnhandled(async (_, res, __) => {
     const game: IGameSession = res.locals.game
 
-    res.json({
-      sessionId: game.getId(),
-      word: game.getMainWord(),
-      history: game.getWordsHistory(),
-    })
+    res.json(game.getGameData())
   }),
 )
 
@@ -69,9 +62,7 @@ router.post(
       return next(error)
     }
 
-    res.json({
-      history: game.getWordsHistory(),
-    })
+    res.json(game.getGameData())
   }),
 )
 

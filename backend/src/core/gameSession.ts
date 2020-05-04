@@ -9,11 +9,18 @@ const logger: log4js.Logger = log4js.getLogger('app')
 export class InvalidWordError extends Error {}
 export class WordAlreadyPresentError extends Error {}
 
+export type GameData = {
+  sessionId: GameSessionId
+  word: Word
+  history: Word[]
+}
+
 export interface IGameSession {
   applyWord(word: Word): void
   getMainWord(): Word
   getWordsHistory(): Word[]
   getId(): GameSessionId
+  getGameData(): GameData
 }
 
 class GameSession implements IGameSession {
@@ -50,6 +57,14 @@ class GameSession implements IGameSession {
 
   public getWordsHistory(): Word[] {
     return this.wordsHistory
+  }
+
+  public getGameData(): GameData {
+    return {
+      sessionId: this.getId(),
+      word: this.getMainWord(),
+      history: this.getWordsHistory(),
+    }
   }
 }
 

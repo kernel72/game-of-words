@@ -4,7 +4,7 @@
   "description": "Backend of game-of-words game",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "HTTP_LOG_LEVEL=error APP_LOG_LEVEL=error jest",
     "test:watch": "HTTP_LOG_LEVEL=error APP_LOG_LEVEL=error jest --watch",
     "build": "rm -rf ./dist && tsc",
     "dev": "nodemon"
