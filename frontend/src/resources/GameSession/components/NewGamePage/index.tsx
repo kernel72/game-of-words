@@ -15,10 +15,19 @@ const NewGamePage: React.FC = () => {
     }
     history.push(`/g/${currentGameSession.sessionId}`)
   }, [currentGameSession, history])
-  
+
   return (
-    <Box>
-      <NewGameButton />
+    <Box
+      width="100%"
+      height="100vh"
+      textAlign="center"
+      display="flex"
+      justifyContent="center"
+      flexDirection="column"
+    >
+      <Box>
+        <NewGameButton />
+      </Box>
     </Box>
   )
 }

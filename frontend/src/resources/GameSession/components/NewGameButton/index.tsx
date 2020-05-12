@@ -6,7 +6,7 @@ const NewGameButton: React.FC = () => {
   const startNewGame = useNewGameCreator()
   return (
     <Button variant="outlined" color="primary" onClick={startNewGame}>
-      Start New Game
+      Новая Игра
     </Button>
   )
 }

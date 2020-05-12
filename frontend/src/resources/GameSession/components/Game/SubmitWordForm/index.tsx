@@ -6,7 +6,7 @@ import {
   FieldRenderProps,
 } from 'react-final-form'
 
-import { TextField, Button } from '@material-ui/core'
+import { TextField, Button, Box } from '@material-ui/core'
 
 type Props = {
   onSubmit: (word: string) => Promise<void>
@@ -18,6 +18,8 @@ const WordToSubmitInputFieldRender: React.FC<FieldRenderProps<
 >> = ({ input, meta }) => {
   return (
     <TextField
+      fullWidth={true}
+      autoFocus={true}
       name={input.name}
       onChange={input.onChange}
       error={Boolean(meta.touched && (meta.error || meta.submitError))}
@@ -43,20 +45,28 @@ const SubmitWordForm: React.FC<Props> = ({ onSubmit }) => {
 
   return (
     <Form
-    
       onSubmit={onFormSubmit}
       render={({ handleSubmit, submitting }: FormRenderProps) => {
         return (
           <form onSubmit={handleSubmit}>
-            <Field name="wordToSubmit" render={WordToSubmitInputFieldRender} />
-            <Button
-              disabled={submitting}
-              variant="outlined"
-              color="primary"
-              type="submit"
-            >
-              Submit
-            </Button>
+            <Box width="100%" display="flex">
+              <Box flex="1">
+              <Field
+                name="wordToSubmit"
+                render={WordToSubmitInputFieldRender}
+              />
+              </Box>
+              <Box marginLeft="1rem">
+              <Button
+                disabled={submitting}
+                variant="outlined"
+                color="primary"
+                type="submit"
+              >
+                Добавить
+              </Button>
+              </Box>
+            </Box>
           </form>
         )
       }}

@@ -33,14 +33,41 @@ const Game: React.FC = () => {
   ) : loadError ? (
     <GameLoadFailed errorMessage={loadError} />
   ) : (
-    <Box display="flex" justifyContent="center" flexDirection="column">
-      <Box>
-        <Box>SessionId: {sessionId}</Box>
-        <Box>Main Word: {game?.mainWord}</Box>
-        <Box>History: {game?.history.join(', ')}</Box>
+    <Box
+      height="100vh"
+      width="100%"
+      display="flex"
+      justifyContent="center"
+      flexDirection="column"
+    >
+      <Box
+        height="30vh"
+        display="flex"
+        justifyContent="center"
+        textAlign="center"
+        flexDirection="column"
+      >
+        <Box fontSize="6rem">{game?.mainWord}</Box>
       </Box>
-      <Box>
-        <SubmitWordForm onSubmit={submitWord} />
+      <Box height="70vh" display="flex" justifyContent="center">
+        <Box width="40%" marginX="30%">
+          <Box textAlign="center">
+            <Box>Введите слово, которое можно составить из слова выше</Box>
+            <Box marginTop="4rem">
+              <SubmitWordForm onSubmit={submitWord} />
+            </Box>
+          </Box>
+          <Box marginTop="5rem">
+            <Box>Найденные слова ({game?.history.length})</Box>
+            <Box display="flex" flexWrap="wrap">
+              {game?.history.map((word) => (
+                <Box key={word} marginTop="0.5rem" marginRight="0.5rem">
+                  {word}
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Box>
       </Box>
     </Box>
   )
