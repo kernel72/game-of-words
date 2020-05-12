@@ -20,7 +20,19 @@ lineReader.on('line', line => {
   // tslint:enable
 
   word = word.trim()
-  const [type, _, amount, gender, cse] = opts.trim().split(' ')
+  const parsedOpts = opts.trim().split(' ')
+
+  let type
+  let amount
+  let cse
+  let kind
+  let liveNotLive
+
+  if (parsedOpts.length === 4) {
+    ;[type, amount, kind, cse] = parsedOpts
+  } else {
+    ;[type, liveNotLive, amount, kind, cse] = parsedOpts
+  }
 
   if (
     type.trim() !== 'сущ' ||
