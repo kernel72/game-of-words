@@ -7,6 +7,7 @@ import {
   GameSessions,
   InvalidWordError,
   WordAlreadyPresentError,
+  WordDoesNotExistError,
 } from 'src/core/gameSession'
 import { Word, HttpError } from '../core/types'
 
@@ -55,7 +56,8 @@ router.post(
       const error = new HttpError(e.message)
       if (
         e instanceof InvalidWordError ||
-        e instanceof WordAlreadyPresentError
+        e instanceof WordAlreadyPresentError ||
+        e instanceof WordDoesNotExistError
       ) {
         error.status = 400
       }

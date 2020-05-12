@@ -4,9 +4,7 @@ import * as readline from 'readline'
 import { Word } from 'src/core/types'
 
 const lineReader = readline.createInterface({
-  input: fs.createReadStream(
-    path.resolve(__dirname, '../dicts/hagen-morf.txt'),
-  ),
+  input: fs.createReadStream(path.resolve('./dicts/hagen-morf.txt')),
 })
 
 const words: Word[] = []
@@ -27,13 +25,8 @@ lineReader.on('line', line => {
   if (
     type.trim() !== 'сущ' ||
     (amount && amount.trim() !== 'ед') ||
-    (gender && gender.trim() !== 'муж') ||
     (cse && cse.trim() !== 'им')
   ) {
-    return
-  }
-
-  if (word.length < 14) {
     return
   }
 

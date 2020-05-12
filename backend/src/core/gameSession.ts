@@ -8,6 +8,7 @@ const logger: log4js.Logger = log4js.getLogger('app')
 
 export class InvalidWordError extends Error {}
 export class WordAlreadyPresentError extends Error {}
+export class WordDoesNotExistError extends Error {}
 
 export type GameData = {
   sessionId: GameSessionId
@@ -26,7 +27,9 @@ export interface IGameSession {
 class GameSession implements IGameSession {
   private id: GameSessionId = shortId.generate()
   private wordsHistory: string[] = []
-  private mainWordInstance: IMainWord = new MainWord(Library.getRandomWord())
+  private mainWordInstance: IMainWord = new MainWord(
+    Library.getRandomMainWord(),
+  )
 
   constructor() {
     logger.info(`New game session started ${this.id}`)
@@ -35,6 +38,10 @@ class GameSession implements IGameSession {
   public applyWord(word: Word): void {
     word = word && word.trim().toLowerCase()
     const { isValid, validationError } = this.mainWordInstance.isValidWord(word)
+
+    if (!Library.doesWordExist(word)) {
+      throw new WordDoesNotExistError('Word does not exist')
+    }
 
     if (!isValid) {
       throw new InvalidWordError(validationError)

@@ -42,7 +42,7 @@ export class MainWord implements IMainWord {
     if (!word || word.length < 3) {
       return {
         isValid: false,
-        validationError: 'Word should be more than 2 letters.',
+        validationError: 'Word should have more than 1 letter.',
       }
     }
 
