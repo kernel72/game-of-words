@@ -15,7 +15,7 @@
     "axios": "^0.19.2",
     "final-form": "^4.19.1",
     "http-proxy-middleware": "^1.0.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-final-form": "^6.4.0",
