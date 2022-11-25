@@ -1,87 +1,41 @@
-import { Word } from './types'
-
-type LettersMap = {
-  [index: string]: number
-}
+import { Word, MainWordData } from './types'
 
 export type WordValidationResult = {
-  isValid: boolean
-  validationError?: string
+  isPassed: boolean
+  passingError?: string
 }
 
 export interface IMainWord {
-  isValidWord(word: Word): WordValidationResult
+  isWordPassed(word: Word): WordValidationResult
   getMainWord(): Word
+  getIncludedWords(): Word[]
 }
 
 export class MainWord implements IMainWord {
-  public static parseWord(word: string): LettersMap {
-    const lettersMap: LettersMap = {}
-    for (const letter of word) {
-      if (lettersMap[letter] === undefined) {
-        lettersMap[letter] = 0
-      }
-      lettersMap[letter]++
-    }
-    return lettersMap
-  }
+  private mainWordData: MainWordData
 
-  private mainWord: string
-  private lettersMap: LettersMap
-
-  constructor(word: Word) {
-    this.mainWord = word.trim().toLowerCase()
-    this.lettersMap = MainWord.parseWord(this.mainWord)
+  constructor(mainWordData: MainWordData) {
+    this.mainWordData = mainWordData
   }
 
   public getMainWord(): Word {
-    return this.mainWord
+    return this.mainWordData.mainWord
   }
 
-  public isValidWord(word: Word): WordValidationResult {
-    if (!word || word.length < 3) {
-      return {
-        isValid: false,
-        validationError: 'Word should have more than 1 letter.',
-      }
-    }
+  public getIncludedWords(): Word[] {
+    return this.mainWordData.includedWords
+  }
 
-    if (word === this.mainWord) {
-      return {
-        isValid: false,
-        validationError: 'Word is the same as main word',
-      }
-    }
+  public isWordPassed(word: Word): WordValidationResult {
+    const isIncluded = this.mainWordData.includedWords.includes(
+      word.trim().toLowerCase(),
+    )
 
-    const letterMap = { ...this.lettersMap }
-
-    for (const char of word) {
-      if (char.toUpperCase() === char.toLowerCase()) {
-        return {
-          isValid: false,
-          validationError: 'Word contains special symbols.',
+    return isIncluded
+      ? { isPassed: true }
+      : {
+          isPassed: false,
+          passingError: 'WordIsNotIncluded',
         }
-      }
-
-      const charsAmount = letterMap[char]
-
-      if (charsAmount === undefined) {
-        return {
-          isValid: false,
-          validationError: `No letter '${char}' in this word`,
-        }
-      }
-
-      if (charsAmount === 0) {
-        return {
-          isValid: false,
-          validationError: `Only ${this.lettersMap[char]} entries of '${char}' is acceptable.`,
-        }
-      }
-
-      letterMap[char]--
-    }
-
-    return { isValid: true }
   }
 }

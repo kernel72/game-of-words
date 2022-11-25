@@ -7,6 +7,7 @@ const SESSION_ENDPOINT = '/session'
 
 export type Game = {
   mainWord: string
+  amountOfIncludedWords: number
   history: string[]
 }
 
@@ -19,6 +20,7 @@ export type GameSession = {
 
 type GameDataResponse = {
   sessionId: string
+  amountOfIncludedWords: number
   word: string
   history: string[]
 }
@@ -41,12 +43,12 @@ export const GameSessionContextProvider: React.FC = ({ children }) => {
 
   const startNewGame = useCallback(async () => {
     const {
-      data: { sessionId, word: mainWord, history },
+      data: { sessionId, word: mainWord, history, amountOfIncludedWords },
     } = await axios.post<GameDataResponse>(SESSION_ENDPOINT)
     console.log('New game started', sessionId)
     const gameSessionData = {
       sessionId,
-      game: { mainWord, history },
+      game: { mainWord, history, amountOfIncludedWords },
       isLoaded: true,
     }
 
@@ -61,10 +63,10 @@ export const GameSessionContextProvider: React.FC = ({ children }) => {
       }
 
       const { sessionId } = currentGameSession
-      
+
       try {
         const {
-          data: { history, word: mainWord },
+          data: { history, word: mainWord, amountOfIncludedWords },
         } = await axios.post<GameDataResponse>(
           `${SESSION_ENDPOINT}/${sessionId}/applyWord`,
           {
@@ -74,7 +76,7 @@ export const GameSessionContextProvider: React.FC = ({ children }) => {
 
         const gameSessionData = {
           ...currentGameSession,
-          game: { mainWord, history },
+          game: { mainWord, history, amountOfIncludedWords },
         }
 
         setCurrentGameSession(gameSessionData)
@@ -94,18 +96,16 @@ export const GameSessionContextProvider: React.FC = ({ children }) => {
     let gameSessionData
     try {
       const {
-        data: { sessionId, word: mainWord, history },
+        data: { sessionId, word: mainWord, history, amountOfIncludedWords },
       } = await axios.get<GameDataResponse>(
         `${SESSION_ENDPOINT}/${loadSessionId}`,
       )
 
       gameSessionData = {
         sessionId,
-        game: { mainWord, history },
+        game: { mainWord, history, amountOfIncludedWords },
         isLoaded: true,
       }
-
-
     } catch (e) {
       const errorMesage =
         e.response?.status === 404 ? 'Game not found' : e.message
@@ -115,8 +115,6 @@ export const GameSessionContextProvider: React.FC = ({ children }) => {
         isLoaded: true,
         loadError: errorMesage,
       }
-
-      
     }
     setCurrentGameSession(gameSessionData)
     return gameSessionData

@@ -14,6 +14,8 @@ export type GameData = {
   sessionId: GameSessionId
   word: Word
   history: Word[]
+  amountOfIncludedWords: number
+  allIncludedWords: Word[]
 }
 
 export interface IGameSession {
@@ -37,11 +39,10 @@ class GameSession implements IGameSession {
 
   public applyWord(word: Word): void {
     word = word && word.trim().toLowerCase()
-    const { isValid, validationError } = this.mainWordInstance.isValidWord(word)
-
-    if (!Library.doesWordExist(word)) {
-      throw new WordDoesNotExistError('Word does not exist')
-    }
+    const {
+      isPassed: isValid,
+      passingError: validationError,
+    } = this.mainWordInstance.isWordPassed(word)
 
     if (!isValid) {
       throw new InvalidWordError(validationError)
@@ -70,6 +71,8 @@ class GameSession implements IGameSession {
     return {
       sessionId: this.getId(),
       word: this.getMainWord(),
+      amountOfIncludedWords: this.mainWordInstance.getIncludedWords().length,
+      allIncludedWords: this.mainWordInstance.getIncludedWords(),
       history: this.getWordsHistory(),
     }
   }

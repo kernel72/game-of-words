@@ -58,7 +58,7 @@ const Game: React.FC = () => {
             </Box>
           </Box>
           <Box marginTop="5rem">
-            <Box>Найденные слова ({game?.history.length})</Box>
+            <Box>Найденные слова ({game?.history.length} / {game?.amountOfIncludedWords})</Box>
             <Box display="flex" flexWrap="wrap">
               {game?.history.map((word) => (
                 <Box key={word} marginTop="0.5rem" marginRight="0.5rem">

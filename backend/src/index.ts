@@ -6,7 +6,7 @@ import { AddressInfo } from 'net'
 import app, { logger } from './app'
 
 Library.loadLibraryFromFile(
-  path.resolve(__dirname, '../dicts/words-rus.txt'),
+  path.resolve(__dirname, '../dicts/words-rus-index.json'),
 ).then(() => {
   const listener = app.listen(8080, () => {
     const addresInfo: AddressInfo = listener.address() as AddressInfo

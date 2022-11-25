@@ -1,62 +1,44 @@
 import * as fs from 'fs'
-import * as readline from 'readline'
 import * as log4js from 'log4js'
+import { promisify } from 'util'
 import { isEmpty } from 'lodash'
 
-import { Word } from './types'
+import { MainWordData } from './types'
 
 const logger: log4js.Logger = log4js.getLogger('app')
 
 export class LibraryNotLoadedError extends Error {}
 export class LibraryNotInitialized extends Error {}
 
+const readFile = promisify(fs.readFile)
+
 class LibraryClass {
-  private library: Word[] = []
-  private mainWords: Word[] = []
+  private mainWordsIndex: MainWordData[] = []
 
-  public getRandomMainWord(): Word {
-    if (isEmpty(this.mainWords)) {
+  public getRandomMainWord(): MainWordData {
+    if (isEmpty(this.mainWordsIndex)) {
       throw new LibraryNotInitialized('Library is not loaded')
     }
 
-    const randomNum = Math.floor(Math.random() * this.mainWords.length)
-    return this.mainWords[randomNum]
+    const randomNum = Math.floor(Math.random() * this.mainWordsIndex.length)
+    return this.mainWordsIndex[randomNum]
   }
 
-  public doesWordExist(word: Word): boolean {
-    if (isEmpty(this.library)) {
-      throw new LibraryNotInitialized('Library is not loaded')
-    }
-    return this.library.includes(word)
-  }
-
-  public async loadLibraryFromArray(words: Word[]): Promise<void> {
+  public async loadLibraryFromArray(
+    libraryIndex: MainWordData[],
+  ): Promise<void> {
     this.libraryLoadStart('array')
-    this.library = words
+    this.mainWordsIndex = libraryIndex
     this.libraryLoadComplete()
   }
 
   public async loadLibraryFromFile(filename: string): Promise<void> {
     this.libraryLoadStart(filename)
 
-    return new Promise(resolve => {
-      const lineReader = readline.createInterface({
-        input: fs.createReadStream(filename),
-      })
+    const rawData: string = await readFile(filename, 'utf8')
+    this.mainWordsIndex = JSON.parse(rawData)
 
-      lineReader.on('line', line => {
-        const word = line.trim()
-        this.library.push(word)
-        if (word.length > 13) {
-          this.mainWords.push(word)
-        }
-      })
-
-      lineReader.on('close', () => {
-        resolve()
-        this.libraryLoadComplete()
-      })
-    })
+    this.libraryLoadComplete()
   }
 
   private libraryLoadStart(source: string): void {
@@ -65,7 +47,7 @@ class LibraryClass {
 
   private libraryLoadComplete(): void {
     logger.info(
-      `Library loaded! ${this.library.length} words added. ${this.mainWords.length} will be used as Main ones`,
+      `Library loaded! ${this.mainWordsIndex.length} will be used as Main ones`,
     )
   }
 }
