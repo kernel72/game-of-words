@@ -1,19 +1,34 @@
 import React from 'react'
-import {BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { GameSessionContextProvider } from 'src/resources/GameSession/context'
-import Game from 'src/resources/GameSession/components/Game'
-import NewGamePage from './resources/GameSession/components/NewGamePage'
+import {
+  GameSessionContextProvider,
+  GamePage,
+  NewGamePage,
+} from 'src/resources/GameSession'
 
-const App: React.FC = () => (
-  <GameSessionContextProvider>
-    <Router>
-      <Switch>
-        <Route path='/' exact component={NewGamePage} />
-        <Route path='/g/:sessionId' component={Game} />
-      </Switch>
-    </Router>
-  </GameSessionContextProvider>
-)
+const App: React.FC = () => {
+  const queryClient = new QueryClient()
+
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <NewGamePage />,
+    },
+    {
+      path: '/g/:sessionId',
+      element: <GamePage />,
+    },
+  ])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <GameSessionContextProvider>
+        <RouterProvider router={router} />
+      </GameSessionContextProvider>
+    </QueryClientProvider>
+  )
+}
 
 export default App

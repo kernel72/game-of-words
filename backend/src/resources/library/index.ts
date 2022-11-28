@@ -3,7 +3,7 @@ import * as log4js from 'log4js'
 import { promisify } from 'util'
 import { isEmpty } from 'lodash'
 
-import { MainWordData } from './types'
+import { MainWordData } from '../gameSessionsManager'
 
 const logger: log4js.Logger = log4js.getLogger('app')
 

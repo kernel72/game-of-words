@@ -1,7 +1,7 @@
 import React from 'react'
-import { Box } from '@material-ui/core'
+import { Box } from '@mui/material'
 
-import NewGameButton from 'src/resources/GameSession/components/NewGameButton'
+import { NewGameButton } from '../../NewGameButton'
 
 type Props = {
   errorMessage: string

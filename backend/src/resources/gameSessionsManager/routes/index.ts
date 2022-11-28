@@ -5,18 +5,19 @@ type Middleware = (req: Request, res: Response, next: NextFunction) => void
 import {
   IGameSession,
   GameSessions,
-  InvalidWordError,
-  WordAlreadyPresentError,
-  WordDoesNotExistError,
-} from 'src/core/gameSession'
-import { Word, HttpError } from '../core/types'
+  WordIsAlreadyPresentError,
+  WordIsNotIncludedError,
+} from 'src/resources/gameSessionsManager'
+import { Word } from '../model'
+
+import { HttpError } from '../../../http/types'
 
 export const router = Router()
 
 router.post(
   '/session',
   catchUnhandled((_, res, __) => {
-    const game = GameSessions.getNewGame()
+    const game = GameSessions.createGameSession()
 
     res.json(game.getGameData())
   }),
@@ -55,9 +56,8 @@ router.post(
     } catch (e) {
       const error = new HttpError(e.message)
       if (
-        e instanceof InvalidWordError ||
-        e instanceof WordAlreadyPresentError ||
-        e instanceof WordDoesNotExistError
+        e instanceof WordIsAlreadyPresentError ||
+        e instanceof WordIsNotIncludedError
       ) {
         error.status = 400
       }
@@ -70,7 +70,8 @@ router.post(
 
 function getGameSessionMiddlw(reqParam: string): Middleware {
   return (req, res, next) => {
-    const game = GameSessions.getGameSession(req.params[reqParam])
+    const sessionId = req.params[reqParam]
+    const game = GameSessions.getGameSessionById(sessionId)
     if (!game) {
       const e = new HttpError('Game not found')
       e.status = 404

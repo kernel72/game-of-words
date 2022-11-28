@@ -1,20 +1,19 @@
-import React, { useContext, useEffect } from 'react'
-import GameSessionContext from 'src/resources/GameSession/context'
-import { Box } from '@material-ui/core'
-import { useHistory } from 'react-router-dom'
-import NewGameButton from '../NewGameButton'
+import { FC, useContext, useEffect } from 'react'
+import { GameSessionContext } from '../../context'
+import { Box } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { NewGameButton } from '../NewGameButton'
 
-const NewGamePage: React.FC = () => {
-  const { currentGameSession } = useContext(GameSessionContext)
-
-  const history = useHistory()
+export const NewGamePage: FC = () => {
+  const navigate = useNavigate()
+  const { sessionId } = useContext(GameSessionContext)
 
   useEffect(() => {
-    if (!currentGameSession.isLoaded) {
+    if (!sessionId) {
       return
     }
-    history.push(`/g/${currentGameSession.sessionId}`)
-  }, [currentGameSession, history])
+    navigate(`/g/${sessionId}`)
+  }, [sessionId, navigate])
 
   return (
     <Box
@@ -31,5 +30,3 @@ const NewGamePage: React.FC = () => {
     </Box>
   )
 }
-
-export default NewGamePage

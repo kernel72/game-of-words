@@ -1,13 +1,24 @@
-import React from 'react'
-import { useNewGameCreator } from 'src/resources/GameSession/hooks'
-import { Button } from '@material-ui/core'
+import { FC, useCallback, useContext } from 'react'
+import { useNewGameCreator } from '../../hooks'
+import { GameSessionContext } from '../../context'
+import { Button } from '@mui/material'
 
-const NewGameButton: React.FC = () => {
-  const startNewGame = useNewGameCreator()
+export const NewGameButton: FC = () => {
+  const { mutateAsync: createNewGame } = useNewGameCreator()
+  const { sessionId, setSessionId } = useContext(GameSessionContext)
+
+  const onClick = useCallback(async () => {
+    if (sessionId) {
+      return
+    }
+
+    const data = await createNewGame()
+    setSessionId(data.id)
+  }, [createNewGame, sessionId, setSessionId])
+
   return (
-    <Button variant="outlined" color="primary" onClick={startNewGame}>
+    <Button variant="outlined" color="primary" onClick={onClick}>
       Новая Игра
     </Button>
   )
 }
-export default NewGameButton

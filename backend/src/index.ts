@@ -1,5 +1,5 @@
 import 'module-alias/register'
-import { Library } from 'src/core/library'
+import { Library } from 'src/resources/library'
 import * as path from 'path'
 import { AddressInfo } from 'net'
 

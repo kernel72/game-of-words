@@ -1,8 +1,8 @@
 import * as log4js from 'log4js'
 import express, { Response, Request, NextFunction } from 'express'
 import * as bodyParser from 'body-parser'
-import { router } from './routes'
-import { HttpError, HttpErrorResponseBody } from './core/types'
+import { router } from './resources/gameSessionsManager/routes'
+import { HttpError, HttpErrorResponseBody } from './http/types'
 
 const app = express()
 

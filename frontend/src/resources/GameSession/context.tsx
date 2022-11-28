@@ -1,137 +1,32 @@
-import React, { useCallback, useState } from 'react'
-import axios from 'axios'
+import { createContext, FC, ReactNode, useState } from 'react'
 
-axios.defaults.baseURL = '/api/v1'
-
-const SESSION_ENDPOINT = '/session'
-
-export type Game = {
-  mainWord: string
-  amountOfIncludedWords: number
-  history: string[]
-}
-
-export type GameSession = {
+type GameSessionContextType = {
   sessionId?: string
-  isLoaded: boolean
-  loadError?: string
-  game?: Game
+  setSessionId: (sessionId?: string) => void
 }
 
-type GameDataResponse = {
-  sessionId: string
-  amountOfIncludedWords: number
-  word: string
-  history: string[]
+export const GameSessionContext = createContext<GameSessionContextType>({
+  sessionId: undefined,
+  setSessionId: () => {},
+})
+
+type Props = {
+  children: ReactNode
 }
 
-export type GameSessionContext = {
-  startNewGame: () => Promise<GameSession>
-  currentGameSession: GameSession
-  applyWord: (word: string) => Promise<GameSession>
-  loadGame: (sessionId: string) => Promise<GameSession>
-}
-
-const GameSessionContext = React.createContext<GameSessionContext>(
-  {} as GameSessionContext,
-)
-
-export const GameSessionContextProvider: React.FC = ({ children }) => {
-  const [currentGameSession, setCurrentGameSession] = useState<GameSession>({
-    isLoaded: false,
-  })
-
-  const startNewGame = useCallback(async () => {
-    const {
-      data: { sessionId, word: mainWord, history, amountOfIncludedWords },
-    } = await axios.post<GameDataResponse>(SESSION_ENDPOINT)
-    console.log('New game started', sessionId)
-    const gameSessionData = {
-      sessionId,
-      game: { mainWord, history, amountOfIncludedWords },
-      isLoaded: true,
-    }
-
-    setCurrentGameSession(gameSessionData)
-    return gameSessionData
-  }, [setCurrentGameSession])
-
-  const applyWord = useCallback(
-    async (word: string) => {
-      if (!currentGameSession.isLoaded) {
-        throw new Error('Game is not started')
-      }
-
-      const { sessionId } = currentGameSession
-
-      try {
-        const {
-          data: { history, word: mainWord, amountOfIncludedWords },
-        } = await axios.post<GameDataResponse>(
-          `${SESSION_ENDPOINT}/${sessionId}/applyWord`,
-          {
-            word,
-          },
-        )
-
-        const gameSessionData = {
-          ...currentGameSession,
-          game: { mainWord, history, amountOfIncludedWords },
-        }
-
-        setCurrentGameSession(gameSessionData)
-        return gameSessionData
-      } catch (e) {
-        const response = e?.response
-        if (response.status === 400) {
-          throw new Error(response.data.message)
-        }
-        throw e
-      }
-    },
-    [currentGameSession],
-  )
-
-  const loadGame = useCallback(async (loadSessionId: string) => {
-    let gameSessionData
-    try {
-      const {
-        data: { sessionId, word: mainWord, history, amountOfIncludedWords },
-      } = await axios.get<GameDataResponse>(
-        `${SESSION_ENDPOINT}/${loadSessionId}`,
-      )
-
-      gameSessionData = {
-        sessionId,
-        game: { mainWord, history, amountOfIncludedWords },
-        isLoaded: true,
-      }
-    } catch (e) {
-      const errorMesage =
-        e.response?.status === 404 ? 'Game not found' : e.message
-
-      gameSessionData = {
-        sessionId: loadSessionId,
-        isLoaded: true,
-        loadError: errorMesage,
-      }
-    }
-    setCurrentGameSession(gameSessionData)
-    return gameSessionData
-  }, [])
+export const GameSessionContextProvider: FC<Props> = ({ children }) => {
+  const [currentSessionId, setSessionId] = useState<string | undefined>()
 
   return (
     <GameSessionContext.Provider
       value={{
-        loadGame,
-        currentGameSession,
-        startNewGame,
-        applyWord,
+        sessionId: currentSessionId,
+        setSessionId: (newSessionId?: string) => {
+          setSessionId(newSessionId)
+        },
       }}
     >
       {children}
     </GameSessionContext.Provider>
   )
 }
-
-export default GameSessionContext
