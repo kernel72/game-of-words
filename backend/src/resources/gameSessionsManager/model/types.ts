@@ -2,8 +2,8 @@ export type GameSessionId = string
 export type Word = string
 
 export type MainWordData = {
-  mainWord: Word
-  includedWords: Word[]
+  word: Word
+  included_words: Word[]
 }
 
 export type GameData = {

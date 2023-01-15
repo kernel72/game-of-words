@@ -9,10 +9,20 @@ import {
 import { TextField, Button, Box } from '@mui/material'
 import { FormApi } from 'final-form'
 
-import { getErrorMessage } from 'src/utils/errorsHandling'
+import {
+  getErrorMessage,
+  getResponseErrorData,
+  RequestGeneralErrorData,
+} from 'src/utils/errorsHandling'
 
 import { useWordApplier } from '../../../hooks'
-import { GAME_ERRORS_MESSAGES } from './errors'
+import {
+  ApplyWordError,
+  ApplyWordErrorMessages,
+  WordIsLessThanRequiredLengthError,
+  WORD_IS_LESS_THAN_REQUIRED_LENGTH_ERROR,
+} from './errors'
+import { AxiosError } from 'axios'
 
 type Props = {
   sessionId: string
@@ -40,6 +50,33 @@ const WordToSubmitInputField: FC<FieldRenderProps<string, HTMLElement>> = ({
   )
 }
 
+const getGameErrorMessage = (e: unknown): string => {
+  if (!(e instanceof AxiosError<RequestGeneralErrorData>)) {
+    return getErrorMessage(e)
+  }
+
+  const errorData = getResponseErrorData<RequestGeneralErrorData>(e)
+  if (!errorData) {
+    return getErrorMessage(e)
+  }
+
+  if (!Object.keys(ApplyWordErrorMessages).includes(errorData.name)) {
+    return errorData.message
+  }
+
+  const errName: ApplyWordError = errorData.name as ApplyWordError
+
+  switch (errName) {
+    case WORD_IS_LESS_THAN_REQUIRED_LENGTH_ERROR:
+      const data = errorData as WordIsLessThanRequiredLengthError
+      return ApplyWordErrorMessages[
+        WORD_IS_LESS_THAN_REQUIRED_LENGTH_ERROR
+      ].replace('{{charsAmount}}', data.minimumValue)
+    default:
+      return ApplyWordErrorMessages[errName]
+  }
+}
+
 const SubmitWordForm: FC<Props> = ({ sessionId }) => {
   const { mutateAsync: applyWord } = useWordApplier(sessionId)
 
@@ -53,9 +90,7 @@ const SubmitWordForm: FC<Props> = ({ sessionId }) => {
       try {
         await applyWord(wordToSubmit)
       } catch (e) {
-        const message = getErrorMessage(e)
-
-        return { wordToSubmit: GAME_ERRORS_MESSAGES[message] ?? message }
+        return { wordToSubmit: getGameErrorMessage(e) }
       }
       setTimeout(form.reset)
     },

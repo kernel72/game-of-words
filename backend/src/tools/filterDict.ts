@@ -4,7 +4,7 @@ import * as readline from 'readline'
 import { Word, MainWordData } from '../resources/gameSessionsManager'
 
 const lineReader = readline.createInterface({
-  input: fs.createReadStream(path.resolve('./dicts/hagen-morf.txt')),
+  input: fs.createReadStream(path.resolve('../.././dicts/hagen-morf.txt')),
 })
 
 let words: Word[] = []
@@ -81,10 +81,10 @@ lineReader.on('close', () => {
     // tslint:disable-next-line:no-console
     console.log(`Processing Word ${i + 1}/${words.length}\r`)
     mainWordsIndex.forEach(mainWordData => {
-      if (word.length === mainWordData.mainWord.length) {
+      if (word.length === mainWordData.word.length) {
         return
       }
-      const lettersAmount = parseWord(mainWordData.mainWord)
+      const lettersAmount = parseWord(mainWordData.word)
 
       for (const char of word) {
         const charsAmount = lettersAmount[char]
@@ -93,13 +93,13 @@ lineReader.on('close', () => {
         }
         lettersAmount[char]--
       }
-      mainWordData.includedWords.push(word)
+      mainWordData.included_words.push(word)
     })
 
     if (word.length > 13) {
       mainWordsIndex.push({
-        mainWord: word,
-        includedWords: [],
+        word,
+        included_words: [],
       })
     }
   })

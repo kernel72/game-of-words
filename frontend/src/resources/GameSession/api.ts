@@ -21,15 +21,20 @@ const transformGameData: TransformResponseFunc = (data: GameDataDto) => {
     id: sessionId,
     mainWord: word,
     history,
-    totalPossibleWords: amountOfIncludedWords,
+    knownWordsAmount: amountOfIncludedWords,
   }
 }
 
-export const createNewGame = async () => {
-  const { data } = await axios.post<GameDataDto>(
-    SESSION_ENDPOINT,
-    undefined,
-  )
+type CreateNewGameOptions = {
+  minimumWordLength: number
+}
+
+const DEFAULT_GAME_OPTIONS: CreateNewGameOptions = {
+  minimumWordLength: 5,
+}
+
+export const createNewGame = async (gameOptions: CreateNewGameOptions = DEFAULT_GAME_OPTIONS) => {
+  const { data } = await axios.post<GameDataDto>(SESSION_ENDPOINT, gameOptions)
   return transformGameData(data)
 }
 

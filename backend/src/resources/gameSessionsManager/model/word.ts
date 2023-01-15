@@ -8,14 +8,14 @@ export class MainWord {
   }
 
   public getMainWord(): Word {
-    return this.mainWordData.mainWord
+    return this.mainWordData.word
   }
 
   public getIncludedWords(): Word[] {
-    return this.mainWordData.includedWords
+    return this.mainWordData.included_words
   }
 
   public checkWordIncludes(word: Word): boolean {
-    return this.mainWordData.includedWords.includes(word.trim().toLowerCase())
+    return this.mainWordData.included_words.includes(word.trim().toLowerCase())
   }
 }
