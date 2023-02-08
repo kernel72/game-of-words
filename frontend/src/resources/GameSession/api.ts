@@ -6,22 +6,22 @@ axios.defaults.baseURL = '/api/v1'
 const SESSION_ENDPOINT = '/session'
 
 export type GameDataDto = {
-  sessionId: string
-  word: string
-  history: string[]
-  amountOfIncludedWords: number
+  session_id: string
+  main_word: string
+  found_words: string[]
+  known_words_amount: number
 }
 
 type TransformResponseFunc = (data: GameDataDto) => GameSessionData
 
 const transformGameData: TransformResponseFunc = (data: GameDataDto) => {
-  const { sessionId, word, history, amountOfIncludedWords } = data
+  const { session_id, main_word, found_words, known_words_amount } = data
 
   return {
-    id: sessionId,
-    mainWord: word,
-    history,
-    knownWordsAmount: amountOfIncludedWords,
+    id: session_id,
+    mainWord: main_word,
+    foundWords: found_words,
+    knownWordsAmount: known_words_amount
   }
 }
 
@@ -47,7 +47,7 @@ export const applyWord = async ({
   word,
 }: ApplyWordRequestParams) => {
   const { data } = await axios.post<GameDataDto>(
-    `${SESSION_ENDPOINT}/${sessionId}/applyWord`,
+    `${SESSION_ENDPOINT}/${sessionId}/apply`,
     {
       word,
     },

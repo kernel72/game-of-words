@@ -1,6 +1,6 @@
 export type GameSessionData = {
   id: string,
   mainWord: string
-  history: string[]
+  foundWords: string[]
   knownWordsAmount: number
 }

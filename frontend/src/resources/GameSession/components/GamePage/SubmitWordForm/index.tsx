@@ -11,8 +11,7 @@ import { FormApi } from 'final-form'
 
 import {
   getErrorMessage,
-  getResponseErrorData,
-  RequestGeneralErrorData,
+  getResponseErrorDetails,
 } from 'src/utils/errorsHandling'
 
 import { useWordApplier } from '../../../hooks'
@@ -20,9 +19,10 @@ import {
   ApplyWordError,
   ApplyWordErrorMessages,
   WordIsLessThanRequiredLengthError,
-  WORD_IS_LESS_THAN_REQUIRED_LENGTH_ERROR,
+  WORD_LENGTH_IS_LESS_THAN_REQUIRED_ERROR,
 } from './errors'
 import { AxiosError } from 'axios'
+
 
 type Props = {
   sessionId: string
@@ -51,29 +51,24 @@ const WordToSubmitInputField: FC<FieldRenderProps<string, HTMLElement>> = ({
 }
 
 const getGameErrorMessage = (e: unknown): string => {
-  if (!(e instanceof AxiosError<RequestGeneralErrorData>)) {
-    return getErrorMessage(e)
+  if(!(e instanceof Error)){
+    console.error('Unknown error', e)
+    return `Unknown error: ${e}`
   }
 
-  const errorData = getResponseErrorData<RequestGeneralErrorData>(e)
-  if (!errorData) {
-    return getErrorMessage(e)
+  const err = e as AxiosError
+  const errorMessage = getErrorMessage(err)
+
+  if(!Object.keys(ApplyWordErrorMessages).includes(errorMessage)){
+    return errorMessage
   }
 
-  if (!Object.keys(ApplyWordErrorMessages).includes(errorData.name)) {
-    return errorData.message
-  }
-
-  const errName: ApplyWordError = errorData.name as ApplyWordError
-
-  switch (errName) {
-    case WORD_IS_LESS_THAN_REQUIRED_LENGTH_ERROR:
-      const data = errorData as WordIsLessThanRequiredLengthError
-      return ApplyWordErrorMessages[
-        WORD_IS_LESS_THAN_REQUIRED_LENGTH_ERROR
-      ].replace('{{charsAmount}}', data.minimumValue)
+  switch(errorMessage){
+    case WORD_LENGTH_IS_LESS_THAN_REQUIRED_ERROR:
+      const errorData = getResponseErrorDetails<WordIsLessThanRequiredLengthError>(err)
+      return ApplyWordErrorMessages[errorData!.error_key].replace('{{charsAmount}}', errorData!.error_params.required_length.toString())
     default:
-      return ApplyWordErrorMessages[errName]
+      return ApplyWordErrorMessages[errorMessage as ApplyWordError]
   }
 }
 

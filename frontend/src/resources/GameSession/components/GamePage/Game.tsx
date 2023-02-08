@@ -26,7 +26,7 @@ export const Game: FC<Props> = ({ sessionId }) => {
     return <GameLoadFailed errorMessage={error} />
   }
 
-  const { mainWord, history, knownWordsAmount } = gameData
+  const { mainWord, foundWords, knownWordsAmount } = gameData
 
   return (
     <Box
@@ -55,10 +55,10 @@ export const Game: FC<Props> = ({ sessionId }) => {
           </Box>
           <Box marginTop="5rem">
             <Box>
-              Найденные слова ({history.length} / {knownWordsAmount})
+              Найденные слова ({foundWords.length} / {knownWordsAmount})
             </Box>
             <Box display="flex" flexWrap="wrap">
-              {history.map((word) => (
+              {foundWords.map((word) => (
                 <Box key={word} marginTop="0.5rem" marginRight="0.5rem">
                   {word}
                 </Box>

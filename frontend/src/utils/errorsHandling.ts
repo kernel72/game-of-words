@@ -1,19 +1,22 @@
 import { AxiosError } from 'axios'
 
-export type RequestGeneralErrorData = {
-  code: number
-  name: string
-  message: string
+export type RequestErrorDetails<TKey = string, TParams = undefined> = {
+  error_key: TKey
+  error_params: TParams extends object ? TParams : undefined
 }
 
-export const getResponseErrorData = <TErrorData = RequestGeneralErrorData>(
-  e: AxiosError<TErrorData>,
-): TErrorData | undefined => e.response?.data
+export type RequestErrorData<TErrorDetails = RequestErrorDetails> = {
+  detail: TErrorDetails
+}
 
-export const getErrorMessage = (e: unknown): string => {
-  if (e instanceof AxiosError<RequestGeneralErrorData>) {
-    return e.response?.data.message || e.message
-  }
+export const getResponseErrorDetails = <TErrorDetails = RequestErrorDetails>(
+  e: AxiosError,
+): TErrorDetails | undefined => {
+  const errData = e.response?.data as RequestErrorData<TErrorDetails> | undefined
+  return errData?.detail
+}
 
-  return String(e)
+export const getErrorMessage = (e: Error): string => {
+  const errData = getResponseErrorDetails(e as AxiosError)
+  return errData?.error_key || e.message
 }

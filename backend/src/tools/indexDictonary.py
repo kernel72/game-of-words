@@ -28,6 +28,9 @@ def load_and_filter_words_from_dictionary(dictionary_path: str) -> set[str]:
 
             word = raw_word.strip()
 
+            if len(raw_word) < 3:
+                continue
+
             opts = raw_opts.strip().split(" ")
 
             cse = None
