@@ -48,7 +48,8 @@ export const Game: FC<Props> = ({ sessionId }) => {
       <Box height="70vh" display="flex" justifyContent="center">
         <Box width="40%" marginX="30%">
           <Box textAlign="center">
-            <Box>Введите слово, которое можно составить из слова выше</Box>
+            <Box>Введите слово, которое можно составить из слова выше.</Box>
+            <Box>Слово должно быть существительным в единственном числе.</Box>
             <Box marginTop="4rem">
               <SubmitWordForm sessionId={sessionId} />
             </Box>

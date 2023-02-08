@@ -12,10 +12,10 @@ export type ApplyWordError = [
 ][number]
 
 export const ApplyWordErrorMessages: Record<ApplyWordError, string> = {
-  [WORD_IS_NOT_INCLUDED_ERROR]: 'Нет этого слова в основном слове',
-  [WORD_IS_ALREADY_PRESENT_ERROR]: 'Это слово уже найдено',
+  [WORD_IS_NOT_INCLUDED_ERROR]: 'Такое слово нельзя составить из основного',
+  [WORD_IS_ALREADY_PRESENT_ERROR]: 'Такое слово уже найдено',
   [WORD_LENGTH_IS_LESS_THAN_REQUIRED_ERROR]:
-    'Слово не должно быть менее {{charsAmount}} букв',
+    'Слово должно быть не менее {{charsAmount}} букв',
 } as const
 
 export type WordIsLessThanRequiredLengthError = RequestErrorDetails<

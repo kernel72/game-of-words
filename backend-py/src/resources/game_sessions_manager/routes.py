@@ -62,7 +62,6 @@ def get_session(session_id: str):
 class ApplyWordRequestBody(BaseModel):
     word: str
 
-
 @router.post(
     path="/{session_id}/apply",
     responses={
