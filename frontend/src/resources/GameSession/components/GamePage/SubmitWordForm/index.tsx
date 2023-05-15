@@ -1,12 +1,12 @@
 import { FC, useCallback, useEffect } from 'react'
 import { useForm, UseControllerProps, useController } from 'react-hook-form'
-import { AxiosError } from 'axios'
 import { TextField, Button, Box } from '@mui/material'
 
 import { useWordApplier } from 'src/resources/GameSession/hooks'
 import {
   getErrorMessage,
   getResponseErrorDetails,
+  assertIsAxiosError,
 } from 'src/utils/errorsHandling'
 
 import {
@@ -24,13 +24,12 @@ type FormData = {
   wordToSubmit: string
 }
 
-const getGameErrorMessage = (e: unknown): string => {
-  if (!(e instanceof Error)) {
-    console.error('Unknown error', e)
-    return `Unknown error: ${e}`
+const getGameErrorMessage = (err: unknown): string => {
+  if (!(err instanceof Error)) {
+    console.error('Unknown error', err)
+    return `Unknown error: ${err}`
   }
 
-  const err = e as AxiosError
   const errorMessage = getErrorMessage(err)
 
   if (!Object.keys(ApplyWordErrorMessages).includes(errorMessage)) {
@@ -39,6 +38,7 @@ const getGameErrorMessage = (e: unknown): string => {
 
   switch (errorMessage) {
     case WORD_LENGTH_IS_LESS_THAN_REQUIRED_ERROR:
+      assertIsAxiosError(err)
       const errorData =
         getResponseErrorDetails<WordIsLessThanRequiredLengthError>(err)
 
