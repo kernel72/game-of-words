@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Box } from '@mui/material'
 import { useGameSession } from '../../hooks'
 
-import SubmitWordForm from './SubmitWordForm'
+import { SubmitWordForm } from './SubmitWordForm'
 import GameLoadFailed from './GameLoadFail'
 
 type Props = {
