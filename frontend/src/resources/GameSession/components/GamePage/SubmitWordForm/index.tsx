@@ -4,16 +4,16 @@ import { TextField, Button, Box } from '@mui/material'
 
 import { useWordApplier } from 'src/resources/GameSession/hooks'
 import {
+  assertIsRequestErrorData,
   getErrorMessage,
   getResponseErrorDetails,
-  assertIsAxiosError,
 } from 'src/utils/errorsHandling'
 
 import {
-  ApplyWordError,
   ApplyWordErrorMessages,
-  WordIsLessThanRequiredLengthError,
   WORD_LENGTH_IS_LESS_THAN_REQUIRED_ERROR,
+  wordLengthIsLessThanRequiredErrorParamsSchema,
+  isErrorApplyWordError,
 } from './errors'
 
 type Props = {
@@ -25,30 +25,28 @@ type FormData = {
 }
 
 const getGameErrorMessage = (err: unknown): string => {
-  if (!(err instanceof Error)) {
-    console.error('Unknown error', err)
-    return `Unknown error: ${err}`
-  }
-
   const errorMessage = getErrorMessage(err)
 
-  if (!Object.keys(ApplyWordErrorMessages).includes(errorMessage)) {
+  if (!isErrorApplyWordError(errorMessage)) {
     return errorMessage
   }
 
   switch (errorMessage) {
     case WORD_LENGTH_IS_LESS_THAN_REQUIRED_ERROR:
-      assertIsAxiosError(err)
-      const errorData =
-        getResponseErrorDetails<WordIsLessThanRequiredLengthError>(err)
+      assertIsRequestErrorData(err)
+      const details = getResponseErrorDetails(err)
 
-      return ApplyWordErrorMessages[errorData!.error_key].replace(
+      const errParams = wordLengthIsLessThanRequiredErrorParamsSchema.parse(
+        details.error_params,
+      )
+
+      return ApplyWordErrorMessages[errorMessage].replace(
         '{{charsAmount}}',
-        errorData!.error_params.required_length.toString(),
+        errParams.required_length.toString(),
       )
 
     default:
-      return ApplyWordErrorMessages[errorMessage as ApplyWordError]
+      return ApplyWordErrorMessages[errorMessage]
   }
 }
 
